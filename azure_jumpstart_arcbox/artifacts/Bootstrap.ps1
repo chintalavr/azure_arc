@@ -425,8 +425,8 @@ else {
 
     # Creating scheduled task for MonitorWorkbookLogonScript.ps1
 
-    $Action = New-ScheduledTaskAction -Execute $ScheduledTaskExecutable -Argument $Env:ArcBoxDir\MonitorWorkbookLogonScript.ps1
-    Register-ScheduledTask -TaskName "MonitorWorkbookLogonScript" -User $adminUsername -Action $Action -RunLevel "Highest" -Force
+    #$Action = New-ScheduledTaskAction -Execute $ScheduledTaskExecutable -Argument $Env:ArcBoxDir\MonitorWorkbookLogonScript.ps1
+    #Register-ScheduledTask -TaskName "MonitorWorkbookLogonScript" -User $adminUsername -Action $Action -RunLevel "Highest" -Force
 
     # Disabling Windows Server Manager Scheduled Task
     Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask

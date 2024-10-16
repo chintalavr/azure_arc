@@ -43,20 +43,20 @@ Register-ScheduledTask -TaskName "WinGetLogonScript" -Trigger $Trigger -CimSessi
 
 # Creating scheduled task for DataOpsLogonScript.ps1
 $Action = New-ScheduledTaskAction -Execute "pwsh.exe" -Argument "$Env:ArcBoxDir\DataOpsLogonScript.ps1"
-$WorkbookAction = New-ScheduledTaskAction -Execute "pwsh.exe" -Argument "$Env:ArcBoxDir\MonitorWorkbookLogonScript.ps1"
-$nestedSQLAction = New-ScheduledTaskAction -Execute "pwsh.exe" -Argument "$Env:ArcBoxDir\ArcServersLogonScript.ps1"
+#$WorkbookAction = New-ScheduledTaskAction -Execute "pwsh.exe" -Argument "$Env:ArcBoxDir\MonitorWorkbookLogonScript.ps1"
+#$nestedSQLAction = New-ScheduledTaskAction -Execute "pwsh.exe" -Argument "$Env:ArcBoxDir\ArcServersLogonScript.ps1"
 
 # Register schedule task under local account
-Register-ScheduledTask -TaskName "DataOpsLogonScript" -Action $Action -RunLevel "Highest" -CimSession $cimsession -Force
-Write-Host "Registered scheduled task 'DataOpsLogonScript'."
+#Register-ScheduledTask -TaskName "DataOpsLogonScript" -Action $Action -RunLevel "Highest" -CimSession $cimsession -Force
+#Write-Host "Registered scheduled task 'DataOpsLogonScript'."
 
 # Creating scheduled task for MonitorWorkbookLogonScript.ps1
-Register-ScheduledTask -TaskName "MonitorWorkbookLogonScript" -Action $WorkbookAction -RunLevel "Highest" -CimSession $cimsession -Force
-Write-Host "Registered scheduled task 'MonitorWorkbookLogonScript'."
+#Register-ScheduledTask -TaskName "MonitorWorkbookLogonScript" -Action $WorkbookAction -RunLevel "Highest" -CimSession $cimsession -Force
+#Write-Host "Registered scheduled task 'MonitorWorkbookLogonScript'."
 
 # Creating scheduled task for ArcServersLogonScript.ps1
-Register-ScheduledTask -TaskName "ArcServersLogonScript" -Action $nestedSQLAction -RunLevel "Highest" -CimSession $cimsession -Force
-Write-Host "Registered scheduled task 'ArcServersLogonScript'."
+#Register-ScheduledTask -TaskName "ArcServersLogonScript" -Action $nestedSQLAction -RunLevel "Highest" -CimSession $cimsession -Force
+#Write-Host "Registered scheduled task 'ArcServersLogonScript'."
 
 #Disable local account
 $account=(Get-LocalGroupMember -Group "Administrators" | Where-Object {$_.PrincipalSource -eq "Local"}).name.split('\')[1]
