@@ -45,13 +45,21 @@ configuration:
                 - addLabel:
                     label: ArcBox
           - if:
-              # Identify if the issue title contains the word "hcibox" (not case insensitive) and add the "HCIBox" label
+              # Identify if the issue title contains the word "hcibox" (not case insensitive) and add the "LocalBox" label
               - titleContains:
                     pattern: "(?i)hcibox"
                     isRegex: true
             then:
                 - addLabel:
-                    label: HCIBox
+                    label: LocalBox
+          - if:
+              # Identify if the issue title contains the word "hcibox" (not case insensitive) and add the "LocalBox" label
+              - titleContains:
+                    pattern: "(?i)localbox"
+                    isRegex: true
+            then:
+                - addLabel:
+                    label: LocalBox
           - if:
               # Identify if the issue title contains the word "agora" (not case insensitive) and add the "Agora" label
               - titleContains:
@@ -263,16 +271,21 @@ configuration:
               label: Needs-Triage
 
       - description: Add the "Needs-Triage" label when issue has no assignees.
-        # This rule ensures that all open issues that are not assigned to someone are marked for triage by adding the "Needs-Triage" label
+        # This rule ensures that all open issues that are not assigned to someone, do not have the "Needs-Triage" label, and are not labeled as "Abandoned" are marked for triage by adding the "Needs-Triage" label
         if:
           - payloadType: Issues
           - and:
              - not:
                 isAssignedToSomeone
           - and:
-             - not:
-                hasLabel:
-                    label: Needs-Triage
+              # Check if the issue does not have the "Needs-Triage" label
+              - not:
+                  hasLabel:
+                      label: Needs-Triage
+              # Check if the issue does not have the "Abandoned" label
+              - not:
+                  hasLabel:
+                      label: Abandoned
         then:
           - addLabel:
               label: Needs-Triage   
@@ -362,14 +375,18 @@ configuration:
         - addLabel:
             label: Missing-Milestone
 
-      - description: Add the "Missing-Milestone" label to closed issues without a milestone.
-        # This rule helps ensure all closed issues are tracked with a milestone by adding the "Missing-Milestone" label
+      - description: Add the "Missing-Milestone" label to closed issues without a milestone and not labeled as "Abandoned".
+        # This rule helps ensure all closed issues without a milestone and not labeled as "Abandoned" are tracked with a milestone by adding the "Missing-Milestone" label
         if:
         - payloadType: Issues
         - isAction:
             action: Closed
         - not:
             isPartOfAnyMilestone
+        - and:
+            - not:
+                hasLabel:
+                    label: Abandoned
         then:
         - addLabel:
             label: Missing-Milestone
