@@ -1,10 +1,8 @@
 param (
   [string]$adminUsername,
   [string]$adminPassword,
-  [string]$spnClientId,
-  [string]$spnClientSecret,
   [string]$spnProviderId,
-  [string]$spnTenantId,
+  [string]$tenantId,
   [string]$subscriptionId,
   [string]$resourceGroup,
   [string]$azureLocation,
@@ -12,7 +10,7 @@ param (
   [string]$workspaceName,
   [string]$templateBaseUrl,
   [string]$registerCluster,
-  [string]$deployAKSHCI,
+  [string]$deployAKSArc,
   [string]$deployResourceBridge,
   [string]$natDNS,
   [string]$rdpPort,
@@ -26,25 +24,23 @@ Write-Output "Input parameters:"
 $PSBoundParameters
 
 [System.Environment]::SetEnvironmentVariable('adminUsername', $adminUsername, [System.EnvironmentVariableTarget]::Machine)
-[System.Environment]::SetEnvironmentVariable('spnClientID', $spnClientId, [System.EnvironmentVariableTarget]::Machine)
-[System.Environment]::SetEnvironmentVariable('spnClientSecret', $spnClientSecret, [System.EnvironmentVariableTarget]::Machine)
-[System.Environment]::SetEnvironmentVariable('spnTenantId', $spnTenantId, [System.EnvironmentVariableTarget]::Machine)
+[System.Environment]::SetEnvironmentVariable('tenantId', $tenantId, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('spnProviderId', $spnProviderId, [System.EnvironmentVariableTarget]::Machine)
-[System.Environment]::SetEnvironmentVariable('SPN_CLIENT_ID', $spnClientId, [System.EnvironmentVariableTarget]::Machine)
-[System.Environment]::SetEnvironmentVariable('SPN_CLIENT_SECRET', $spnClientSecret, [System.EnvironmentVariableTarget]::Machine)
-[System.Environment]::SetEnvironmentVariable('SPN_TENANT_ID', $spnTenantId, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('subscriptionId', $subscriptionId, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('resourceGroup', $resourceGroup, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('azureLocation', $azureLocation, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('stagingStorageAccountName', $stagingStorageAccountName, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('workspaceName', $workspaceName, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('templateBaseUrl', $templateBaseUrl, [System.EnvironmentVariableTarget]::Machine)
-[System.Environment]::SetEnvironmentVariable('deployAKSHCI', $deployAKSHCI, [System.EnvironmentVariableTarget]::Machine)
+[System.Environment]::SetEnvironmentVariable('deployAKSArc', $deployAKSArc, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('deployResourceBridge', $deployResourceBridge, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('autoDeployClusterResource', $autoDeployClusterResource, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('autoUpgradeClusterResource', $autoUpgradeClusterResource, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('registerCluster', $registerCluster, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('natDNS', $natDNS, [System.EnvironmentVariableTarget]::Machine)
+[System.Environment]::SetEnvironmentVariable('LocalBoxDir', "C:\LocalBox", [System.EnvironmentVariableTarget]::Machine)
+[System.Environment]::SetEnvironmentVariable('LocalBoxLogsDir', "C:\LocalBox\Logs", [System.EnvironmentVariableTarget]::Machine)
+[System.Environment]::SetEnvironmentVariable('LocalBoxTestsDir', "C:\LocalBox\Tests", [System.EnvironmentVariableTarget]::Machine)
 
 if ($debugEnabled -eq "true") {
   [System.Environment]::SetEnvironmentVariable('ErrorActionPreference', "Break", [System.EnvironmentVariableTarget]::Machine)
@@ -135,7 +131,7 @@ Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Write-Host "Installing PowerShell modules..."
 
 Install-Module -Name Microsoft.PowerShell.PSResourceGet -Force
-$modules = @("Az", "Az.ConnectedMachine", "Azure.Arc.Jumpstart.Common", "Microsoft.PowerShell.SecretManagement", "Pester")
+$modules = @("Az", "Az.ConnectedMachine", "Azure.Arc.Jumpstart.Common", "Azure.Arc.Jumpstart.LocalBox", "Microsoft.PowerShell.SecretManagement", "Pester")
 
 foreach ($module in $modules) {
     Install-PSResource -Name $module -Scope AllUsers -Quiet -AcceptLicense -TrustRepository

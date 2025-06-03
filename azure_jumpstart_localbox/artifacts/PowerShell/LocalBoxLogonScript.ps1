@@ -8,57 +8,15 @@ Set-PSDebug -Strict
 
 # Load config file
 $LocalBoxConfig = Import-PowerShellDataFile -Path $Env:LocalBoxConfigFile
-$Env:LocalBoxTestsDir = "$Env:LocalBoxDir\Tests"
 
 Start-Transcript -Path "$($LocalBoxConfig.Paths.LogsDir)\LocalBoxLogonScript.log"
 
-#####################################################################
-# Setup Azure CLI and Azure PowerShell
-#####################################################################
-
-# Login to Azure CLI with service principal provided by user
-Write-Header "Az CLI Login"
-az login --service-principal --username $Env:spnClientID --password=$Env:spnClientSecret --tenant $Env:spnTenantId
-
-# Login to Azure PowerShell with service principal provided by user
-$spnpassword = ConvertTo-SecureString $env:spnClientSecret -AsPlainText -Force
-$spncredential = New-Object System.Management.Automation.PSCredential ($env:spnClientId, $spnpassword)
-Connect-AzAccount -ServicePrincipal -Credential $spncredential -Tenant $env:spntenantId -Subscription $env:subscriptionId
-
-#####################################################################
-# Register Azure providers
-#####################################################################
-
-# Register Azure providers
-Write-Header "Registering Providers"
-az provider register --namespace Microsoft.HybridCompute --wait
-az provider register --namespace Microsoft.GuestConfiguration --wait
-az provider register --namespace Microsoft.Kubernetes --wait
-az provider register --namespace Microsoft.KubernetesConfiguration --wait
-az provider register --namespace Microsoft.ExtendedLocation --wait
-az provider register --namespace Microsoft.AzureArcData --wait
-az provider register --namespace Microsoft.OperationsManagement --wait
-az provider register --namespace Microsoft.AzureStackHCI --wait
-az provider register --namespace Microsoft.ResourceConnector --wait
-az provider register --namespace Microsoft.Compute --wait
+# Login to Azure PowerShell
+Connect-AzAccount -Identity -Tenant $Env:tenantId -Subscription $Env:subscriptionId
 
 #####################################################################
 # Add RBAC permissions
 #####################################################################
-
-# Add required RBAC permission required for the service principal to deploy Azure Local
-
-Write-Header "Add required RBAC permission required for the service principal to deploy Azure Local"
-
-$roleAssignment = Get-AzRoleAssignment -ServicePrincipalName $Env:spnClientId -Scope "/subscriptions/$Env:subscriptionId/resourceGroups/$Env:resourceGroup" -RoleDefinitionName "Key Vault Administrator" -ErrorAction SilentlyContinue
-if ($null -eq $roleAssignment) {
-    New-AzRoleAssignment -RoleDefinitionName "Key Vault Administrator" -ServicePrincipalName $Env:spnClientId -Scope "/subscriptions/$Env:subscriptionId/resourceGroups/$Env:resourceGroup"
-}
-
-$roleAssignment = Get-AzRoleAssignment -ServicePrincipalName $Env:spnClientId -Scope "/subscriptions/$Env:subscriptionId/resourceGroups/$Env:resourceGroup" -RoleDefinitionName "Storage Account Contributor" -ErrorAction SilentlyContinue
-if ($null -eq $roleAssignment) {
-    New-AzRoleAssignment -RoleDefinitionName "Storage Account Contributor" -ServicePrincipalName $Env:spnClientId -Scope "/subscriptions/$Env:subscriptionId/resourceGroups/$Env:resourceGroup"
-}
 
 #############################################################
 # Remove registry keys that are used to automatically logon the user (only used for first-time setup)
@@ -87,6 +45,10 @@ $Shortcut = $WshShell.CreateShortcut("$Env:USERPROFILE\Desktop\Logs.lnk")
 $Shortcut.TargetPath = $LogsPath
 $shortcut.WindowStyle = 3
 $shortcut.Save()
+
+# Creating Hyper-V Manager desktop shortcut
+Write-Host 'Creating Hyper-V Shortcut'
+Copy-Item -Path 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Hyper-V Manager.lnk' -Destination 'C:\Users\All Users\Desktop' -Force
 
 #############################################################
 # Configure Windows Terminal as the default terminal application
