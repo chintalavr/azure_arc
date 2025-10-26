@@ -35,8 +35,8 @@ Install-PSResource -Name HyperVDsc -Scope AllUsers -Quiet -AcceptLicense -TrustR
 Install-PSResource -Name NetworkingDsc -Scope AllUsers -Quiet -AcceptLicense -TrustRepository
 
 # Update WinGet package manager to the latest version (running twice due to a known issue regarding WinAppSDK)
-Repair-WinGetPackageManager -AllUsers -Force -Latest -Verbose
-Repair-WinGetPackageManager -AllUsers -Force -Latest -Verbose
+Repair-WinGetPackageManager -AllUsers -Force -Version 1.11.430 -Verbose
+Repair-WinGetPackageManager -AllUsers -Force -Version 1.11.430 -Verbose
 
 # Apply WinGet Configuration files
 winget configure --file C:\ArcBox\DSC\common.dsc.yml --accept-configuration-agreements --disable-interactivity
