@@ -26,8 +26,8 @@ $null = Set-AzResourceGroup -ResourceGroupName $resourceGroup -Tag $tags
 $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $resourceGroup -ResourceType "microsoft.compute/virtualmachines" -Tag $tags -Force
 
 # Install WinGet PowerShell modules
-Install-PSResource -Name Microsoft.WinGet.Client -Scope AllUsers -Quiet -AcceptLicense -TrustRepository
-Install-PSResource -Name Microsoft.WinGet.DSC -Scope AllUsers -Quiet -AcceptLicense -TrustRepository
+Install-PSResource -Name Microsoft.WinGet.Client -Scope AllUsers -Quiet -AcceptLicense -TrustRepository -Version 1.11.460
+Install-PSResource -Name Microsoft.WinGet.DSC -Scope AllUsers -Quiet -AcceptLicense -TrustRepository -Version 1.11.460
 
 # Install DSC resources required for ArcBox
 Install-PSResource -Name DSCR_Font -Scope AllUsers -Quiet -AcceptLicense -TrustRepository
@@ -35,8 +35,8 @@ Install-PSResource -Name HyperVDsc -Scope AllUsers -Quiet -AcceptLicense -TrustR
 Install-PSResource -Name NetworkingDsc -Scope AllUsers -Quiet -AcceptLicense -TrustRepository
 
 # Update WinGet package manager to the latest version (running twice due to a known issue regarding WinAppSDK)
-Repair-WinGetPackageManager -AllUsers -Force -Version 1.11.430 -Verbose
-Repair-WinGetPackageManager -AllUsers -Force -Version 1.11.430 -Verbose
+Repair-WinGetPackageManager -AllUsers -Force -Version 1.11.460 -Verbose
+Repair-WinGetPackageManager -AllUsers -Force -Version 1.11.460 -Verbose
 
 # Apply WinGet Configuration files
 winget configure --file C:\ArcBox\DSC\common.dsc.yml --accept-configuration-agreements --disable-interactivity
