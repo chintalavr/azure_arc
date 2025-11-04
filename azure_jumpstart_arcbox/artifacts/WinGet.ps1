@@ -26,6 +26,7 @@ $null = Set-AzResourceGroup -ResourceGroupName $resourceGroup -Tag $tags
 $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $resourceGroup -ResourceType "microsoft.compute/virtualmachines" -Tag $tags -Force
 
 # Install WinGet PowerShell modules
+# Pinned to version 1.11.460 to avoid known issue: https://github.com/microsoft/winget-cli/issues/5826
 Install-PSResource -Name Microsoft.WinGet.Client -Scope AllUsers -Quiet -AcceptLicense -TrustRepository -Version 1.11.460
 Install-PSResource -Name Microsoft.WinGet.DSC -Scope AllUsers -Quiet -AcceptLicense -TrustRepository -Version 1.11.460
 
@@ -35,8 +36,8 @@ Install-PSResource -Name HyperVDsc -Scope AllUsers -Quiet -AcceptLicense -TrustR
 Install-PSResource -Name NetworkingDsc -Scope AllUsers -Quiet -AcceptLicense -TrustRepository
 
 # Update WinGet package manager to the latest version (running twice due to a known issue regarding WinAppSDK)
-Repair-WinGetPackageManager -AllUsers -Force -Version 1.11.460 -Verbose
-Repair-WinGetPackageManager -AllUsers -Force -Version 1.11.460 -Verbose
+Repair-WinGetPackageManager -AllUsers -Force -Latest -Verbose
+Repair-WinGetPackageManager -AllUsers -Force -Latest -Verbose
 
 # Apply WinGet Configuration files
 winget configure --file C:\ArcBox\DSC\common.dsc.yml --accept-configuration-agreements --disable-interactivity
